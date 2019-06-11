@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fn-machine</title>
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+      #light {
+        width: 100px;
+        height: 100px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid gray;
+        margin: 10px;
+      }
+      #light[on] {
+        background-color:yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="toggle">Toggle</button>
+    <div id="light"></div>
+    <div id="meter"></div>
+    <button id="power">Add jigawatts</button>
+    <script type="module">
+      import {machine, state} from '../index.js';
+      // define initial context
+      const initialContext = {jigawatts: 11};
+
+      // define a machine
+      const myMachine = machine([
+        state('on', {
+          powerOff(detail, context) {
+            // return the next state name
+            return {
+              state:'off',
+            };
+          },
+          increasePower(detail, context) {
+            // add jigawatts
+            const jigawatts = context.jigawatts + detail.increase;
+            return {
+              state: 'on',
+              context: Object.assign({}, context, {jigawatts}),
+            };
+          },
+
+        }),
+        state('off', {
+          powerOn(detail, context) {
+            if (context.jigawatts <= 0) {
+              // can't turn on, not enough jigawatts
+              return {
+                state: 'off',
+                context: Object.assign({}, context)
+              }
+            }
+            // return the next state name and new context
+            return {
+              state:'on',
+              context:Object.assign({}, context, {jigawatts: context.jigawatts - 1})
+            };
+          },
+          increasePower(detail, context) {
+            // add jigawatts
+            const jigawatts = context.jigawatts + detail.increase;
+            return {
+              state: 'off',
+              context: Object.assign({}, context, {jigawatts}),
+            };
+          },
+        })
+      ], 'off', initialContext, (newState) => {
+        // state changed, update UI
+        render(newState);
+      } );
+
+
+      // cache ui bits
+      const toggle = document.body.querySelector('#toggle');
+      const inc = document.body.querySelector('#power');
+      const meter = document.body.querySelector('#meter');
+      const light = document.body.querySelector('#light');
+
+      // update ui
+      function render(currentState) {
+        meter.innerText = `${currentState.context.jigawatts} remaining jigawatts.`;
+        light.innerText = currentState.state;
+        if (currentState.state === 'on') {
+          light.setAttribute('on', '');
+        } else {
+          light.removeAttribute('on');
+        }
+      };
+
+      // use the machine - call the "send" function with the event name
+      let currentState = myMachine('powerOn');
+
+      toggle.addEventListener('click', event => {
+        // if turned off, attempt to turn on, otherwise turn off.
+        if (currentState.state === 'off') {
+          currentState = myMachine('powerOn');
+        } else {
+          currentState = myMachine('powerOff');
+        }
+      });
+
+      inc.addEventListener('click', event => {
+        currentState = myMachine('increasePower', {increase:5});
+      });
+
+    </script>
+  </body>
+</html>
