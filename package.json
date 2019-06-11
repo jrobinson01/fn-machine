@@ -1,0 +1,30 @@
+{
+  "name": "fn-machine",
+  "version": "0.0.1",
+  "description": "a tiny functional state machine",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "mocha -r esm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrobinson01/fn-machine.git"
+  },
+  "keywords": [
+    "state-machine"
+  ],
+  "author": "jrobinson01",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jrobinson01/fn-machine/issues"
+  },
+  "homepage": "https://github.com/jrobinson01/fn-machine#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "esm": "^3.2.25",
+    "mocha": "^6.1.4"
+  }
+}
