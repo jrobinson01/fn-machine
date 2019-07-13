@@ -5,7 +5,7 @@
  */
 
 /**
- * @typedef {import ('./fn-state').default} State
+ * @typedef {import('./fn-state').default} State
  */
 
 /**
@@ -13,10 +13,10 @@
  * @param {Array<State>} states
  * @param {string} initialState
  * @param {object} initialContext
- * @param {function(StateRef)} changeCb
+ * @param {function(StateRef)=} changeCb
  * @return {function(string, object):StateRef}
  */
-export default function machine(states, initialState, initialContext, changeCb) {
+export default function machine(states, initialState, initialContext, changeCb = function(state){}) {
   // store current state (name) and context
   let current = initialState;
   let context = Object.assign({}, initialContext);
@@ -39,20 +39,16 @@ export default function machine(states, initialState, initialContext, changeCb) 
     // if there's a transition, call it, otherwise just return the current state.
     const next = transition ? transition(detail, context) : {state: current, context};
     // if the current state has an exit function, run it.
-    if (active.exit) {
-      active.exit();
-    }
+    active.exit && active.exit();
     const newState = states.find(s => s.name === next.state);
     // if the new state has an enter function, run it as well.
-    if (newState && newState.enter) {
-      newState.enter(next.context);
-    }
+    newState.enter && newState.enter(next.context);
     // update current
     current = next.state;
     // update next.context if necessary
     next.context = context = next.context ? next.context : context;
-    // if a callback was provided, call it with the latest state.
-    changeCb && changeCb(next);
+    // call callback with the latest state.
+    changeCb(next);
     return next;
   }
   return send;
