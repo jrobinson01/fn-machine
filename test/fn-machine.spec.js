@@ -77,20 +77,24 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
       expect(currentState.state).to.equal('off');
       expect(currentState.context.jigawatts).to.equal(11);
     });
+
     it('should not change context if the current state does not support the event', () => {
       const initialState = myMachine();
       const currentState = myMachine('noEvent', {increase:11});
       expect(currentState.context.jigawatts).to.equal(initialState.context.jigawatts);
     });
+
     it('should return the updated the context', () => {
       const initialState = myMachine();
       const currentState = myMachine('powerOn');
       expect(currentState.context.jigawatts).not.to.equal(initialState.context.jigawatts);
     });
+
     it('should use the detail object to update context', () => {
       const currentState = myMachine('increasePower', {increase:5});
       expect(currentState.context.jigawatts).to.equal(16);
     });
+
     it('should call the callback when state changes', () => {
       myMachine('powerOn');
       expect(callback.called).to.equal(true);

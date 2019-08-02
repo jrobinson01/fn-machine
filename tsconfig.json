@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esNext",
+    "module": "esNext",
+    "moduleResolution": "node",
+    "lib": ["es2015", "dom", "es2016.array.include"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "index.js",
+  ]
+}
