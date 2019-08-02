@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "mocha -r esm",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "release": "npm run type-check && np"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "chai": "^4.2.0",
     "esm": "^3.2.25",
     "mocha": "^6.1.4",
+    "np": "^5.0.3",
     "sinon": "^7.3.2"
   }
 }
