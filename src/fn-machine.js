@@ -4,12 +4,9 @@
  * @property {Object} context
  */
 
-// annoyingly, this typedef has to be duplicated from fn-state.js??
-/**
- * @typedef {{name:string, transitions:Object, enter:function, exit:function}} State
- */
+/** @typedef {import('./fn-state').State} State */
 
-/**
+ /**
  * @description define a state machine
  * @param {Array<!State>} states
  * @param {string} initialState
