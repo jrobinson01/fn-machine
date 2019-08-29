@@ -1,17 +1,20 @@
 /**
- * @typedef {Object.<string, function(Object, Object):Object>} Transition
+ * @typedef {{state:string, context?:any}} CurrentState
  */
 /**
- * @typedef {{name:string, transitions:Object, enter:function, exit:function}} State
+ * @typedef {function(Object, Object):CurrentState} Transition
+ */
+/**
+ * @typedef {{name:string, transitions:Object.<string, Transition>, enter:function, exit:function}} State
  */
 /**
  * @description define a single state
  * @param {string} name
- * @param {Object.<string, Transition>=} transitions
- * @param {function=} enterFn
- * @param {function=} exitFn
+ * @param {Object.<string, Transition>} transitions
+ * @param {function(Object)=} enterFn
+ * @param {function(Object)=} exitFn
  * @return {!State}
  */
-export default function state(name, transitions = {}, enterFn = () => {}, exitFn = () => {}) {
+export default function state(name, transitions, enterFn = () => {}, exitFn = () => {}) {
   return {name, transitions, enter: enterFn, exit: exitFn};
 }
