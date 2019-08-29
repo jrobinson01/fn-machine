@@ -6,7 +6,7 @@
 * @param {string} initialState
 * @param {Object} initialContext
 * @param {function(CurrentState)=} changeCb
-* @return {function(string, Object?):CurrentState}
+* @return {function(string, Object=):CurrentState?}
 */
 export default function machine(states: {
     name: string;
@@ -21,7 +21,7 @@ export default function machine(states: {
 }[], initialState: string, initialContext: any, changeCb?: (arg0: {
     state: string;
     context?: any;
-}) => any): (arg0: string, arg1: any) => {
+}) => any): (arg0: string, arg1?: any) => {
     state: string;
     context?: any;
 };
