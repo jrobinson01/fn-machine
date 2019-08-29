@@ -1,9 +1,4 @@
-/**
- * @typedef CurrentState
- * @property {string} state
- * @property {Object} context
- */
-
+/** @typedef {import('./fn-state').CurrentState} CurrentState */
 /** @typedef {import('./fn-state').State} State */
 
  /**

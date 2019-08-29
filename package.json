@@ -1,6 +1,6 @@
 {
   "name": "fn-machine",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "a tiny functional state machine",
   "main": "index.js",
   "directories": {
@@ -9,7 +9,8 @@
   "scripts": {
     "test": "mocha -r esm",
     "type-check": "tsc --noEmit",
-    "release": "npm run type-check && np"
+    "release": "npm run type-check && np",
+    "build-typings": "tsc -p tsconfig-typings.json"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,10 @@
     "esm": "^3.2.25",
     "mocha": "^6.1.4",
     "np": "^5.0.3",
-    "sinon": "^7.3.2"
-  }
+    "sinon": "^7.3.2",
+    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/41996/artifacts?artifactName=tgz&fileId=967EC7B6DC9AAC54797655C1C1403FFCE2BEBB49FBAD58A0AC397F5F2F10AEE202&fileName=/typescript-3.7.0-insiders.20190829.tgz"
+  },
+  "files": [
+    "src/*"
+  ]
 }
