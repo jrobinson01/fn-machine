@@ -1,8 +1,8 @@
 {
   "name": "fn-machine",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "a tiny functional state machine",
-  "main": "index.js",
+  "main": "index",
   "directories": {
     "example": "example"
   },

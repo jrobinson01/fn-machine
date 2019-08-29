@@ -10,23 +10,33 @@
 */
 export default function machine(states: {
     name: string;
-    transitions: any;
+    transitions: {
+        [x: string]: (arg0: any, arg1: any) => {
+            state: string;
+            context?: any;
+        };
+    };
     enter: Function;
     exit: Function;
 }[], initialState: string, initialContext: any, changeCb?: (arg0: {
     state: string;
-    context: any;
+    context?: any;
 }) => any): (arg0: string, arg1: any) => {
     state: string;
-    context: any;
+    context?: any;
 };
 export type CurrentState = {
     state: string;
-    context: any;
+    context?: any;
 };
 export type State = {
     name: string;
-    transitions: any;
+    transitions: {
+        [x: string]: (arg0: any, arg1: any) => {
+            state: string;
+            context?: any;
+        };
+    };
     enter: Function;
     exit: Function;
 };
