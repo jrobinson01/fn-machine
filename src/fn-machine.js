@@ -7,20 +7,15 @@
  * @param {string} initialState
  * @param {Object} initialContext
  * @param {function(CurrentState)=} changeCb
- * @return {function(string, Object):CurrentState}
+ * @return {function(string, Object?):CurrentState}
  */
 export default function machine(states, initialState, initialContext, changeCb = function(state){}) {
   // store current state (name) and context
   let current = initialState;
   let context = Object.assign({}, initialContext);
   const currentState = {state: current, context};
-  /**
-   * @param {string} event
-   * @param {Object} detail
-   * @return {CurrentState}
-   */
-  return function send(event, detail) {
 
+  return function send(event, detail) {
     // if no event, return the current state
     if (!event) {
       return currentState;

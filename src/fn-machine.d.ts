@@ -6,7 +6,7 @@
 * @param {string} initialState
 * @param {Object} initialContext
 * @param {function(CurrentState)=} changeCb
-* @return {function(string, Object):CurrentState}
+* @return {function(string, Object?):CurrentState}
 */
 export default function machine(states: {
     name: string;
