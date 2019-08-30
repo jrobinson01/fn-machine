@@ -32,7 +32,7 @@ export default function machine(states, initialState, initialContext, changeCb =
       active.exit && active.exit();
       const newState = states.find(s => s.name === next.state);
       // if the new state has an enter function, run it as well.
-      newState.enter && newState.enter(next.context);
+      newState.enter && newState.enter(next.context || context);
       // update current
       current = next.state;
       // update next.context if necessary
