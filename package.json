@@ -1,6 +1,6 @@
 {
   "name": "fn-machine",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "a tiny functional state machine",
   "main": "index",
   "directories": {
@@ -34,6 +34,8 @@
     "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/41996/artifacts?artifactName=tgz&fileId=967EC7B6DC9AAC54797655C1C1403FFCE2BEBB49FBAD58A0AC397F5F2F10AEE202&fileName=/typescript-3.7.0-insiders.20190829.tgz"
   },
   "files": [
-    "src/*"
+    "src/*",
+    "index.js",
+    "index.d.ts"
   ]
 }
