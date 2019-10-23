@@ -7,11 +7,11 @@ A tiny, functional, state machine utility
 ### usage
 fn-machine consists of 3 functions. The first two are used to define a machine:
 
-`machine([State], 'initialState', initialContextObj, stateChangeCallback)`
+`machine([State], 'initialState', initialContextObj, stateChangeCallback, loggerFn)`
 
 `state('name', transitionsObj, enterFunction, exitFunction)`
 
-The third function is what would traditionally be called a `send()` function. This function is returned when `machine(...)` is called.
+The third function is what would traditionally be called a `send()` function. This function is returned whenever `machine(...)` is called.
 
 #### Setting up a machine
 ```javascript
@@ -32,6 +32,7 @@ function loadUsers() {
     myMachine('loaded', {users:['foo', 'bar']})
   }, 1000);
 }
+
 // initialize a machine
 const myMachine = machine([
   state('initial', {
@@ -53,16 +54,16 @@ const myMachine = machine([
         context: {...context, ...detail, ...{loading: false}}
       }
     }
-  }, context => {
+  }, context => {// call loadUsers when this state is entered
     loadUsers();
   }),
   state('loadedData', {}) // 'loaded' is an empty state. There are no transitions.
 ], 'initial', initialContext, newState => {
   console.log('myMachine state changed:', newState.state, newState.context);
-})
+}, console.log);// pass an optional logger function
 
 ```
-As you can see in the `loadUsers()` function above, we invoke the third function provided my fn-machine, which is the send function. The send function takes a string as the first parameter, which is the name of a transition we'd like to invoke, and optionally a `detail` object, which might contain some data we want the machine to work with.
+As you can see in the `loadUsers()` function above, we invoke the third function provided by fn-machine, which is the send function. The send function takes a string as the first parameter, which is the name of a transition we'd like to invoke, and optionally a `detail` object, which might contain some data we want the machine to work with.
 
 #### More examples
 

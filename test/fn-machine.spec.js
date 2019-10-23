@@ -33,7 +33,10 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
               context: Object.assign({}, context, {jigawatts}),
             };
           },
-
+          badState(detail, context) {
+            // return a desired state that doesn't exist
+            return {state:'bad'};
+          },
         }),
         state('off', {
           powerOn(detail, context) {
@@ -98,6 +101,11 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
     it('should call the callback when state changes', () => {
       myMachine('powerOn');
       expect(callback.called).to.equal(true);
+    });
+
+    it('should throw an error if the desired state doesn\'t exist', () => {
+      myMachine('powerOn');
+      expect(function() {myMachine('badState')}).to.throw();
     });
   });
 });

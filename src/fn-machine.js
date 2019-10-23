@@ -7,17 +7,20 @@
  * @param {string} initialState
  * @param {Object} initialContext
  * @param {function(CurrentState)=} changeCb
+ * @param {function(any)=} loggerFn
  * @return {function(string, Object=):CurrentState?}
  */
-export default function machine(states, initialState, initialContext, changeCb = function(state){}) {
+export default function machine(states, initialState, initialContext, changeCb = function(){}, loggerFn = function(){}) {
   // store current state (name) and context
   let current = initialState;
   let context = Object.assign({}, initialContext);
   const currentState = {state: current, context};
 
   return function send(event, detail) {
+    loggerFn(`sent '${event}'`);
     // if no event, return the current state
     if (!event) {
+      loggerFn(`no event. returning currentState`);
       return currentState;
     }
     // get the current/active state
@@ -30,9 +33,14 @@ export default function machine(states, initialState, initialContext, changeCb =
       const next = transition ? transition(detail, context) : {state: current, context};
       // we only want to run exit, enter and the callback IF a transition was run.
       if (transition) {
+        const newState = states.find(s => s.name === next.state);
+        if (!newState) {
+          // throw if next state is undefined
+          // throw new Error(`the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`);
+          throw `the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`;
+        }
         // if the current state has an exit function, run it.
         active.exit && active.exit();
-        const newState = states.find(s => s.name === next.state);
         // if the new state has an enter function, run it as well.
         newState.enter && newState.enter(next.context || context);
         // update current
@@ -40,11 +48,15 @@ export default function machine(states, initialState, initialContext, changeCb =
         // update next.context if necessary
         next.context = context = next.context ? next.context : context;
         // call callback with the latest state.
+        loggerFn(`state changed to '${next.state}'`);
         changeCb(next);
+      } else {
+        loggerFn(`state '${current}' does not handle event '${event}'.`);
       }
 
       return next;
     }
+    loggerFn('could not find active state');
     return currentState;
 
   }

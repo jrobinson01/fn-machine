@@ -42,15 +42,9 @@
               state:'off',
             };
           },
-          increasePower(detail, context) {
-            // add jigawatts
-            const jigawatts = context.jigawatts + detail.increase;
-            return {
-              state: 'on',
-              context: Object.assign({}, context, {jigawatts}),
-            };
-          },
-
+          badState(detail, context) {
+            return {state:'bad'}
+          }
         }),
         state('off', {
           powerOn(detail, context) {
@@ -79,7 +73,7 @@
       ], 'off', initialContext, (newState) => {
         // state changed, update UI
         render(newState);
-      });
+      }, console.log);
 
 
       // cache ui bits
@@ -116,6 +110,8 @@
         // increase power
         currentState = myMachine('increasePower', {increase:5});
       });
+
+      window.myMachine = myMachine;
 
     </script>
   </body>
