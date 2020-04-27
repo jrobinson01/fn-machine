@@ -41,8 +41,6 @@ export default function machine(states, initialState, initialContext, changeCb =
         }
         // if the current state has an exit function, run it.
         active.exit && active.exit();
-        // if the new state has an enter function, run it as well.
-        newState.enter && newState.enter(next.context || context);
         // update current
         current = next.state;
         // update next.context if necessary
@@ -50,6 +48,9 @@ export default function machine(states, initialState, initialContext, changeCb =
         // call callback with the latest state.
         loggerFn(`state changed to '${next.state}'`);
         changeCb(next);
+        // if the new state has an enter function, run it as well.
+        // enter _can_ change state
+        newState.enter && newState.enter(next.context || context);
       } else {
         loggerFn(`state '${current}' does not handle event '${event}'.`);
       }
