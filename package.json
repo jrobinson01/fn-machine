@@ -1,6 +1,6 @@
 {
   "name": "fn-machine",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "a tiny functional state machine",
   "main": "index",
   "module": "index",
