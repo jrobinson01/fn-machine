@@ -3,7 +3,7 @@
   "version": "0.0.11",
   "description": "a tiny functional state machine",
   "main": "index",
-  "module":"index",
+  "module": "index",
   "directories": {
     "example": "example"
   },
@@ -29,10 +29,10 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "esm": "^3.2.25",
-    "mocha": "^6.1.4",
+    "mocha": "^7.1.2",
     "np": "^5.0.3",
     "sinon": "^7.3.2",
-    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/41996/artifacts?artifactName=tgz&fileId=967EC7B6DC9AAC54797655C1C1403FFCE2BEBB49FBAD58A0AC397F5F2F10AEE202&fileName=/typescript-3.7.0-insiders.20190829.tgz"
+    "typescript": "^3.8.3"
   },
   "files": [
     "src/*",
