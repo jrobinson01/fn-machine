@@ -36,7 +36,6 @@ export default function machine(states, initialState, initialContext, changeCb =
         const newState = states.find(s => s.name === next.state);
         if (!newState) {
           // throw if next state is undefined
-          // throw new Error(`the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`);
           throw `the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`;
         }
         // if the current state has an exit function, run it.
@@ -50,7 +49,17 @@ export default function machine(states, initialState, initialContext, changeCb =
         changeCb(next);
         // if the new state has an enter function, run it as well.
         // enter _can_ change state
-        newState.enter && newState.enter(next.context || context);
+        // enter can also optionally return a new context
+        const newContext = (newState.enter && newState.enter(next.context || context));
+        // since a common use case for an enter fn is to call an async method (usually loading data),
+        // ignore the return if it's a promise. This is not foolproof but should
+        // handle most cases.
+        if (newContext && !(newContext instanceof Promise)) {
+          context = next.context = newContext;
+          // run changeCb again if context has changed
+          changeCb(next);
+        }
+
       } else {
         loggerFn(`state '${current}' does not handle event '${event}'.`);
       }
