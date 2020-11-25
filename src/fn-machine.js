@@ -35,7 +35,7 @@ export default function machine(states, initialState, initialContext, changeCb =
         // if the transition is a string, return it as the next state, and
         // automatically merge detail and context
         typeof transition === 'string' ?
-        {state: transition, context: {...detail, ...context}} :
+        {state: transition, context: {...context, ...detail}} :
         // otherwise just keep the current state.
         {state: current, context};
 
