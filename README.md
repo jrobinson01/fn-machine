@@ -65,6 +65,24 @@ const myMachine = machine([
 ```
 As you can see in the `loadUsers()` function above, we invoke the third function provided by fn-machine, which is the send function. The send function takes a string as the first parameter, which is the name of a transition we'd like to invoke, and optionally a `detail` object, which might contain some data we want the machine to work with.
 
+You can also define transitions using a short-hand syntax like so:
+```javascript
+state('myState', {
+  someAction: 'newState',
+});
+```
+which is equivelent to:
+```javascript
+state('myState', {
+  someAction: (detail, context) => {
+    return {
+      state: 'newState',
+      context: {...context, ...detail},
+    };
+  },
+});
+```
+
 #### More examples
 
 There is an [example](https://github.com/jrobinson01/fn-machine/blob/master/example/index.html) in this repo, or you can play around with this [codepen](https://codepen.io/johnrobinson/pen/rNBPodV?editors=1001) that shows a basic integration with [LitElement](https://github.com/Polymer/lit-element).
