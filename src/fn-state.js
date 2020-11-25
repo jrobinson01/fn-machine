@@ -2,7 +2,7 @@
  * @typedef {{state:string, context?:any}} CurrentState
  */
 /**
- * @typedef {function(Object, Object):CurrentState} Transition
+ * @typedef {(string | function(Object, Object):CurrentState )} Transition
  */
 /**
  * @typedef {{name:string, transitions:Object.<string, Transition>, enter:function, exit:function}} State
