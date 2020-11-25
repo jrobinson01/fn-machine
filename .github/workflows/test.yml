@@ -1,0 +1,27 @@
+name: Test master PR's that are ready for review
+on:
+  pull_request:
+    branches:
+      - "master"
+    types: [opened, synchronize, ready_for_review]
+    paths-ignore:
+      - "**/*.md"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout repo
+      - uses: actions/checkout@v2
+      - run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/master:refs/remotes/origin/master
+      # set up npm
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      # install deps
+      - run: npm install
+      # typechecking
+      - run: npm run type-check
+      # run tests
+      - run: npm run test
