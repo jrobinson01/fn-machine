@@ -16,7 +16,7 @@ export default function machine(states, initialState, initialContext, changeCb =
   let context = Object.assign({}, initialContext);
   const currentState = {state: current, context};
 
-  return function send(event, detail) {
+  return function send(event, detail = {}) {
     loggerFn(`sent '${event}'`);
     // if no event, return the current state
     if (!event) {
@@ -29,8 +29,16 @@ export default function machine(states, initialState, initialContext, changeCb =
     if (active) {
       const transitionKey = Object.keys(active.transitions || {}).find(k => k === event);
       const transition = active.transitions[transitionKey];
-      // if there's a transition, call it, otherwise just keep the current state.
-      const next = transition ? transition(detail, context) : {state: current, context};
+      // if there's a transition function, call it
+      const next = transition instanceof Function ?
+        transition(detail, context) :
+        // if the transition is a string, return it as the next state, and
+        // automatically merge detail and context
+        typeof transition === 'string' ?
+        {state: transition, context: {...detail, ...context}} :
+        // otherwise just keep the current state.
+        {state: current, context};
+
       // we only want to run exit, enter and the callback IF a transition was run.
       if (transition) {
         const newState = states.find(s => s.name === next.state);
@@ -52,7 +60,7 @@ export default function machine(states, initialState, initialContext, changeCb =
         // enter can also optionally return a new context
         const newContext = (newState.enter && newState.enter(next.context || context));
         // since a common use case for an enter fn is to call an async method (usually loading data),
-        // ignore the return if it's a promise. This is not foolproof but should
+        // ignore the return if it's a promise. This is not foolproof, but should
         // handle most cases.
         if (newContext && !(newContext instanceof Promise)) {
           context = next.context = newContext;

@@ -61,6 +61,7 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
               context: Object.assign({}, context, {jigawatts}),
             };
           },
+          shortHand: 'off',
         })
       ], 'off', initialContext, callback);
     });
@@ -68,6 +69,12 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
     it('should transition if the current state supports the event', () => {
       const currentState = myMachine('powerOn');
       expect(currentState.state).to.equal('on');
+    });
+
+    it('should allow shorthand transitions', () => {
+      const currentState = myMachine('shortHand', {foo:'bar'});
+      expect(currentState.state).to.equal('off');
+      expect(currentState.context.foo).to.equal('bar');
     });
 
     it('should not transition if the current state doesn\'t support the event', () => {
