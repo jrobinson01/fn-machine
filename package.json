@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "mocha -r esm",
+    "test:watch": "mocha -r esm -watch",
     "type-check": "tsc --noEmit",
     "release": "npm run type-check && np",
     "build-typings": "tsc -p tsconfig-typings.json"
