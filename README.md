@@ -87,6 +87,34 @@ state('myState', {
 
 There is an [example](https://github.com/jrobinson01/fn-machine/blob/master/example/index.html) in this repo, or you can play around with this [codepen](https://codepen.io/johnrobinson/pen/rNBPodV?editors=1001) that shows a basic integration with [LitElement](https://github.com/Polymer/lit-element).
 
+#### mermaid
+There are two utility functions to convert to and from mermaid syntax.
+```javascript
+toMermaid([state('on', {powerOff: 'off'}, state('off', {powerOn: 'on'}))], 'off');
+```
+produces a string like that you can process with mermaidjs to visualize your machine:
+```
+stateDiagram-v2
+[*] --> off
+on --> off: powerOff
+off --> on: powerOn
+```
 
+Or, you can take a mermaid string and output some stub javascript:
+```javascript
+const mermaidStr = `
+stateDiagram-v2
+[*] --> off
+on --> off: powerOff
+off --> on: powerOn
+`;
+fromMermaid(mermaidStr);
+```
+which produces:
+```javascript
+[state('on', {powerOff: 'off'}, state('off', {powerOn: 'on'}))]
+```
+
+These are useful for visualization and initial creation of your machines, but beware that if your machine transitions contain logic, that logic would be lost should you try to go full circle: machine -> mermaid -> machine.
 #### Contributing
 Yes! PR's are welcome. Tests are written in mocha. Run with `npm run test` or `yarn test`. Typechecking is provided by typescript via JSDoc annotations.
