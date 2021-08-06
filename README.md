@@ -11,7 +11,7 @@ fn-machine consists of 3 functions. The first two are used to define a machine:
 
 `state('name', transitionsObj, enterFunction, exitFunction)`
 
-The third function is what would traditionally be called a `send()` function. This function is returned whenever `machine(...)` is called.
+The third function is what would traditionally be called a `send()` function. This function is returned by calling `machine(...)`.
 
 #### Setting up a machine
 ```javascript
@@ -22,8 +22,8 @@ import {machine, state} from 'fn-machine';
 // initial context object
 const initialContext = {
   loading: false,
-  users: []
-}
+  users: [],
+};
 
 function loadUsers() {
   // simulate a network request
@@ -31,19 +31,17 @@ function loadUsers() {
     // once the request completes, we can call `myMachine` (the 'send' function).
     myMachine('loaded', {users:['foo', 'bar']})
   }, 1000);
-}
+};
 
 // initialize a machine
 const myMachine = machine([
   state('initial', {
     // each method on this object represents a transition for this particular state.
     loadData: (detail, context) => {
-      // a transition method should return the new state, as well as the optional context.
-      // here we return {state:'loadingData'} to signify we want the state to now be 'loadingData', and
-      // that the context.loading property should be true.
+      // a transition should return the new state, as well as the optional context.
+      // here we return {state:'loadingData'} to signify we want the state to now be 'loadingData'.
       return {
         state:'loadingData',
-        context: {...context, ...{loading: true}}
       }
     }
   }),
@@ -54,16 +52,17 @@ const myMachine = machine([
         context: {...context, ...detail, ...{loading: false}}
       }
     }
-  }, context => {// call loadUsers when this state is entered
+  }, context => {// call loadUsers when this state is entered, and return the new context.
     loadUsers();
+    return {...context, ...{loading: true}};
   }),
-  state('loadedData', {}) // 'loaded' is an empty state. There are no transitions.
+  state('loadedData', {}) // 'loadedData' is an empty/final state. There are no transitions.
 ], 'initial', initialContext, newState => {
   console.log('myMachine state changed:', newState.state, newState.context);
 }, console.log);// pass an optional logger function
 
 ```
-As you can see in the `loadUsers()` function above, we invoke the third function provided by fn-machine, which is the send function. The send function takes a string as the first parameter, which is the name of a transition we'd like to invoke, and optionally a `detail` object, which might contain some data we want the machine to work with.
+In the `loadUsers()` function above, we invoke the third function provided by fn-machine, which is the send function. The send function takes a string as the first parameter, which is the name of a transition we'd like to invoke, and optionally a `detail` object, which contains some data we want the machine to work with, and/or update the context with.
 
 You can also define transitions using a short-hand syntax like so:
 ```javascript
