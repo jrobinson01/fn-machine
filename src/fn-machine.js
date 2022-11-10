@@ -14,14 +14,13 @@ export default function machine(states, initialState, initialContext, changeCb =
   // store current state (name) and context
   let current = initialState;
   let context = Object.assign({}, initialContext);
-  const currentState = {state: current, context};
 
   return function send(event, detail = {}) {
     loggerFn(`sent '${event}'`);
     // if no event, return the current state
     if (!event) {
       loggerFn(`no event. returning currentState`);
-      return currentState;
+      return {state:current, context};
     }
     // get the current/active state
     const active = states.find(s => s.name === current);
@@ -71,12 +70,11 @@ export default function machine(states, initialState, initialContext, changeCb =
       } else {
         loggerFn(`state '${current}' does not handle event '${event}'.`);
       }
-
-      return next;
+      loggerFn('returning', current, context);
+      return {state:current, context};
     }
     loggerFn('could not find active state');
-    return currentState;
-
+    return {state:current, context};
   }
 }
 
