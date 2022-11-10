@@ -2,7 +2,12 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 import {machine, state} from '../index.js';
-
+const STATES = {
+  ON: 'on',
+  OFF: 'off',
+  JUMP:'jump',
+  ERROR:'error',
+}
 describe('machine(states, initialState, initialContext, changeCb)', () => {
   it('should return a \'send\' function', () => {
     const send = machine([state('foo')], 'foo', {});
@@ -18,18 +23,18 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
       callback = sinon.fake();
       // define a machine
       myMachine = machine([
-        state('on', {
+        state(STATES.ON, {
           powerOff(detail, context) {
             // return the next state name
             return {
-              state:'off',
+              state:STATES.OFF,
             };
           },
           increasePower(detail, context) {
             // add jigawatts
             const jigawatts = context.jigawatts + detail.increase;
             return {
-              state: 'on',
+              state: STATES.ON,
               context: Object.assign({}, context, {jigawatts}),
             };
           },
@@ -37,19 +42,20 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
             // return a desired state that doesn't exist
             return {state:'bad'};
           },
+
         }),
-        state('off', {
+        state(STATES.OFF, {
           powerOn(detail, context) {
             if (context.jigawatts <= 0) {
               // can't turn on, not enough jigawatts
               return {
-                state: 'off',
+                state: STATES.OFF,
                 context: Object.assign({}, context)
               }
             }
             // return the next state name and new context
             return {
-              state:'on',
+              state:STATES.ON,
               context:Object.assign({}, context, {jigawatts: context.jigawatts - 1})
             };
           },
@@ -57,34 +63,44 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
             // add jigawatts
             const jigawatts = context.jigawatts + detail.increase;
             return {
-              state: 'off',
+              state: STATES.OFF,
               context: Object.assign({}, context, {jigawatts}),
             };
           },
-          shortHand: 'off',
-        })
-      ], 'off', initialContext, callback);
+          shortHand: STATES.OFF,
+          stateJump(detail, context) {
+            return {state:STATES.JUMP}
+          }
+        }),
+        state(STATES.JUMP, {
+         error: STATES.ERROR,
+        }, () => {
+          // entry
+          myMachine('error')
+        }),
+        state(STATES.ERROR, {})
+      ], STATES.OFF, initialContext, callback);
     });
 
     it('should transition if the current state supports the event', () => {
       const currentState = myMachine('powerOn');
-      expect(currentState.state).to.equal('on');
+      expect(currentState.state).to.equal(STATES.ON);
     });
 
     it('should allow shorthand transitions', () => {
       const currentState = myMachine('shortHand', {foo:'bar'});
-      expect(currentState.state).to.equal('off');
+      expect(currentState.state).to.equal(STATES.OFF);
       expect(currentState.context.foo).to.equal('bar');
     });
 
     it('should not transition if the current state doesn\'t support the event', () => {
       const currentState = myMachine('noEvent');
-      expect(currentState.state).to.equal('off');
+      expect(currentState.state).to.equal(STATES.OFF);
     });
 
     it('should return the current state when called without an event', () => {
       const currentState = myMachine();
-      expect(currentState.state).to.equal('off');
+      expect(currentState.state).to.equal(STATES.OFF);
       expect(currentState.context.jigawatts).to.equal(11);
     });
 
@@ -114,5 +130,9 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
       myMachine('powerOn');
       expect(function() {myMachine('badState')}).to.throw();
     });
+    it('should return the correct state when jumping', () => {
+     const currentState = myMachine('stateJump');
+     expect(currentState.state).to.equal(STATES.ERROR);
+    })
   });
 });
