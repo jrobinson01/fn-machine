@@ -70,7 +70,6 @@ export default function machine(states, initialState, initialContext, changeCb =
       } else {
         loggerFn(`state '${current}' does not handle event '${event}'.`);
       }
-      loggerFn('returning', current, context);
       return {state:current, context};
     }
     loggerFn('could not find active state');
