@@ -13,6 +13,12 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
     const send = machine([state('foo')], 'foo', {});
     expect(send).to.be.a('Function');
   });
+  it('should run the initial states enter function if provided',() => {
+    const enter = sinon.spy();
+    const initState = state('init',{}, enter);
+    const m = machine([initState], 'init', {});
+    sinon.assert.called(enter);
+  })
 
   describe('send(event, detail)', () => {
     let myMachine;

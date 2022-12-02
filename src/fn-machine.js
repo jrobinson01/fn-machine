@@ -14,7 +14,9 @@ export default function machine(states, initialState, initialContext, changeCb =
   // store current state (name) and context
   let current = initialState;
   let context = Object.assign({}, initialContext);
-
+  // get initial state, run it's enter function if necessary
+  const first = states.find(s => s.name === initialState);
+  first && first.enter && first.enter();
   return function send(event, detail = {}) {
     loggerFn(`sent '${event}'`);
     // if no event, return the current state
