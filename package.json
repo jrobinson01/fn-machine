@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "test:watch": "mocha -watch --esm",
+    "test:watch": "mocha -watch",
     "type-check": "tsc --noEmit",
     "release": "npm run type-check && npm run build-typings && np",
     "build-typings": "rimraf **/*.d.ts && tsc -p tsconfig-typings.json"
@@ -30,9 +30,8 @@
   "homepage": "https://github.com/jrobinson01/fn-machine#readme",
   "devDependencies": {
     "chai": "^4.3.7",
-    "esm": "^3.2.25",
     "mocha": "^10.1.0",
-    "np": "^6.5.0",
+    "np": "^7.6.2",
     "rimraf": "^3.0.2",
     "sinon": "^15.0.0",
     "typescript": "^3.8.3"
