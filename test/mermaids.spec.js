@@ -1,6 +1,6 @@
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
+// const expect = require('chai').expect;
+// const sinon = require('sinon');
+import { expect } from 'chai';
 import {toMermaid, fromMermaid, state} from '../index.js';
 
 const states = [

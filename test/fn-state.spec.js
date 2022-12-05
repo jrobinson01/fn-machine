@@ -1,5 +1,5 @@
-const expect = require('chai').expect;
-
+// const expect = require('chai').expect;
+import { expect } from 'chai';
 import {state} from '../index.js';
 
 describe('state(name, transitions, enterFn, exitFn)', () => {

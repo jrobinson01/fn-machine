@@ -4,12 +4,13 @@
   "description": "a tiny functional state machine",
   "main": "index",
   "module": "index",
+  "type": "module",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "test": "mocha -r esm",
-    "test:watch": "mocha -r esm -watch",
+    "test": "mocha",
+    "test:watch": "mocha -watch --esm",
     "type-check": "tsc --noEmit",
     "release": "npm run type-check && npm run build-typings && np",
     "build-typings": "rimraf **/*.d.ts && tsc -p tsconfig-typings.json"
@@ -28,12 +29,12 @@
   },
   "homepage": "https://github.com/jrobinson01/fn-machine#readme",
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.7",
     "esm": "^3.2.25",
-    "mocha": "^7.1.2",
+    "mocha": "^10.1.0",
     "np": "^6.5.0",
     "rimraf": "^3.0.2",
-    "sinon": "^7.3.2",
+    "sinon": "^15.0.0",
     "typescript": "^3.8.3"
   },
   "files": [
