@@ -1,6 +1,5 @@
-const expect = require('chai').expect;
-const sinon = require('sinon');
-
+import { expect } from 'chai';
+import sinon from 'sinon';
 import {machine, state} from '../index.js';
 const STATES = {
   ON: 'on',
