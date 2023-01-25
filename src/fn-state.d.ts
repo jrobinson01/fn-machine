@@ -2,7 +2,7 @@
  * @typedef {{state:string, context?:any}} CurrentState
  */
 /**
- * @typedef {(string | function(Object, Object):CurrentState )} Transition
+ * @typedef {(string | ((detail:any, context:any) => CurrentState ))} Transition
  */
 /**
  * @typedef {{name:string, transitions:Object.<string, Transition>, enter:function, exit:function}} State
@@ -16,14 +16,14 @@
  * @return {!State}
  */
 export default function state(name: string, transitions: {
-    [x: string]: string | ((arg0: any, arg1: any) => {
+    [x: string]: string | ((detail: any, context: any) => {
         state: string;
         context?: any;
     });
 }, enterFn?: (arg0: any) => any, exitFn?: (arg0: any) => any): {
     name: string;
     transitions: {
-        [x: string]: string | ((arg0: any, arg1: any) => {
+        [x: string]: string | ((detail: any, context: any) => {
             state: string;
             context?: any;
         });
@@ -35,14 +35,14 @@ export type CurrentState = {
     state: string;
     context?: any;
 };
-export type Transition = string | ((arg0: any, arg1: any) => {
+export type Transition = string | ((detail: any, context: any) => {
     state: string;
     context?: any;
 });
 export type State = {
     name: string;
     transitions: {
-        [x: string]: string | ((arg0: any, arg1: any) => {
+        [x: string]: string | ((detail: any, context: any) => {
             state: string;
             context?: any;
         });
