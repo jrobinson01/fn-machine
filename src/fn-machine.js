@@ -1,14 +1,22 @@
 /** @typedef {import('./fn-state').CurrentState} CurrentState */
 /** @typedef {import('./fn-state').State} State */
 
+/**
+ * @description send an event through the machine
+ * @callback sendFn
+ * @param {string=} event
+ * @param {any=} detail
+ * @return {CurrentState}
+ */
+
  /**
  * @description define a state machine
  * @param {Array<!State>} states
  * @param {string} initialState
  * @param {Object} initialContext
  * @param {function(CurrentState)=} changeCb
- * @param {function(any)=} loggerFn
- * @return {function(string, Object=):CurrentState?}
+ * @param {function(...any)=} loggerFn
+ * @return {sendFn}
  */
 export default function machine(states, initialState, initialContext, changeCb = function(){}, loggerFn = function(){}) {
   // store current state (name) and context
@@ -17,11 +25,13 @@ export default function machine(states, initialState, initialContext, changeCb =
   // get initial state, run it's enter function if necessary
   const first = states.find(s => s.name === initialState);
   first && first.enter && first.enter();
+
   return function send(event, detail = {}) {
-    loggerFn(`sent '${event}'`);
+    loggerFn(`sent '${event}'`, detail? detail: '');
     // if no event, return the current state
     if (!event) {
-      loggerFn(`no event. returning currentState`);
+      loggerFn(`no event. returning current state '${current}'`);
+      loggerFn('context:', context);
       return {state:current, context};
     }
     // get the current/active state
@@ -55,6 +65,7 @@ export default function machine(states, initialState, initialContext, changeCb =
         next.context = context = next.context ? next.context : context;
         // call callback with the latest state.
         loggerFn(`state changed to '${next.state}'`);
+        loggerFn('context is now:', next.context);
         changeCb(next);
         // if the new state has an enter function, run it as well.
         // enter _can_ change state
