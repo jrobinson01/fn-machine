@@ -5,7 +5,7 @@
  * @callback sendFn
  * @param {string=} event
  * @param {any=} detail
- * @return {CurrentState}
+ * @return {Promise<CurrentState>}
  */
 /**
 * @description define a state machine
@@ -22,7 +22,10 @@ export default function machine(states: {
         [x: string]: string | ((detail: any, context: any) => {
             state: string;
             context?: any;
-        });
+        } | Promise<{
+            state: string;
+            context?: any;
+        }>);
     };
     enter: Function;
     exit: Function;
@@ -40,12 +43,15 @@ export type State = {
         [x: string]: string | ((detail: any, context: any) => {
             state: string;
             context?: any;
-        });
+        } | Promise<{
+            state: string;
+            context?: any;
+        }>);
     };
     enter: Function;
     exit: Function;
 };
-export type sendFn = (event?: string, detail?: any) => {
+export type sendFn = (event?: string, detail?: any) => Promise<{
     state: string;
     context?: any;
-};
+}>;

@@ -82,6 +82,35 @@ state('myState', {
 });
 ```
 
+#### Async transitions
+Transitions can be asynchronous using async functions. This is useful for async operations where it is not necessary to have a specific "loading" or "waiting" state.
+```javascript
+const myMachine = machine([
+  state('initial', {
+    // each method on this object represents a transition for this particular state.
+    async loadData(detail, context) {
+      let response;
+      let error = false;
+      try {
+        response = await fetch('someurl');
+      } catch(e) {
+        error = true;
+      }
+      return {
+        state: error ? 'errorLoading' : 'loadedData',
+        context: {...context, ...(error ? e : response)}
+      }
+    },
+  }),
+  state('errorLoading', {})
+  state('loadedData', {})
+], 'initial', initialContext, newState => {}, console.log);
+```
+
+#### Enter and exit functions
+A state's `enter` function, if defined, is called with the current context as it's only parameter. The enter function can return, resolve or reject with a new context.
+A state's `exit` function is not called with any parameters, and it's return value is ignored. Exit functions are typically used to signal to logic outside the machine that the given state has exited.
+
 #### More examples
 
 There is an [example](https://github.com/jrobinson01/fn-machine/blob/master/example/index.html) in this repo, or you can play around with this [codepen](https://codepen.io/johnrobinson/pen/rNBPodV?editors=1001) that shows a basic integration with [LitElement](https://github.com/Polymer/lit-element).

@@ -3,8 +3,9 @@
  */
 
 /**
- * @typedef {(string | ((detail:any, context:any) => CurrentState ))} Transition
+ * @typedef {(string | ((detail:any, context:any) => CurrentState|Promise<CurrentState> ))} Transition
  */
+
 /**
  * @typedef {{name:string, transitions:Object.<string, Transition>, enter:function, exit:function}} State
  */
