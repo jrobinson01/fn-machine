@@ -11,9 +11,14 @@ function toMermaid(states, initialState) {
   const lines = states.reduce((acc, currentState, index, self) => {
     // create a line for each transition in currentState
     const tKeys = Object.keys(currentState.transitions);
-    acc = acc.concat(tKeys.map(t => {
+    acc = acc.concat(tKeys.map(async t => {
       const v = currentState.transitions[t];
-      return `${currentState.name} --> ${typeof v === 'function' ? v({},{}).state : v}: ${t}`;
+      let state = v;
+      if (typeof v === 'function') {
+        const res = await v({},{});
+        state = res.state;
+      }
+      return `${currentState.name} --> ${state}: ${t}`;
     }))
     return acc;
   },[]);
