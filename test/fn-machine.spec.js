@@ -57,6 +57,19 @@ describe('machine(states, initialState, initialContext, changeCb)', () => {
     const current = await m();
     expect(current.context.foo).to.eq('bar');
   });
+  it('should throw if exit throws', async () => {
+    const exit = function() {
+      throw new Error('oops');
+    };
+    const initState = state('init', {go:'next'},()=>{}, exit);
+    const nextState = state('next', {});
+    const m = await machine([initState, nextState], 'init', {});
+    try {
+      await m('go');
+    }catch(e) {
+      expect(e.message).to.eq('oops');
+    }
+  });
 
   describe('send(event, detail)', () => {
     let myMachine;

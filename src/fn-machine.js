@@ -62,7 +62,11 @@ export default function machine(states, initialState, initialContext, changeCb =
           throw new Error(`the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`);
         }
         // if the current state has an exit function, run it.
-        active.exit && await active.exit();
+        try {
+          active.exit && await active.exit();
+        } catch(e) {
+          throw e;
+        }
         // update current
         current = next.state;
         // update next.context if necessary
