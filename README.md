@@ -90,15 +90,15 @@ const myMachine = machine([
     // each method on this object represents a transition for this particular state.
     async loadData(detail, context) {
       let response;
-      let error = false;
+      let error;
       try {
         response = await fetch('someurl');
       } catch(e) {
-        error = true;
+        error = e;
       }
       return {
         state: error ? 'errorLoading' : 'loadedData',
-        context: {...context, ...(error ? e : response)}
+        context: {...context, ...(error ? error : response)}
       }
     },
   }),
