@@ -6,7 +6,7 @@
  * @callback sendFn
  * @param {string=} event
  * @param {any=} detail
- * @return {CurrentState}
+ * @return {Promise<CurrentState>}
  */
 
  /**
@@ -26,11 +26,11 @@ export default function machine(states, initialState, initialContext, changeCb =
   const first = states.find(s => s.name === initialState);
   first && first.enter && first.enter();
 
-  return function send(event, detail = {}) {
+  return async function send(event, detail = {}) {
     loggerFn(`sent '${event}'`, detail? detail: '');
     // if no event, return the current state
     if (!event) {
-      loggerFn(`no event. returning current state '${current}'`);
+      loggerFn(`no event. returning current state: '${current}'`);
       loggerFn('context:', context);
       return {state:current, context};
     }
@@ -41,24 +41,32 @@ export default function machine(states, initialState, initialContext, changeCb =
       const transitionKey = Object.keys(active.transitions || {}).find(k => k === event);
       const transition = active.transitions[transitionKey];
       // if there's a transition function, call it
-      const next = transition instanceof Function ?
-        transition(detail, context) :
+      let next;
+      try {
+        next = transition instanceof Function ?
+        await transition(detail, context) :
         // if the transition is a string, return it as the next state, and
         // automatically merge detail and context
         typeof transition === 'string' ?
         {state: transition, context: {...context, ...detail}} :
         // otherwise just keep the current state.
         {state: current, context};
-
+      } catch(e) {
+        next = e;
+      }
       // we only want to run exit, enter and the callback IF a transition was run.
       if (transition) {
         const newState = states.find(s => s.name === next.state);
         if (!newState) {
           // throw if next state is undefined
-          throw `the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`;
+          throw new Error(`the transition '${event}' of current state '${current}', returned a non-existant desired state '${next.state}'.`);
         }
         // if the current state has an exit function, run it.
-        active.exit && active.exit();
+        try {
+          active.exit && await active.exit();
+        } catch(e) {
+          throw e;
+        }
         // update current
         current = next.state;
         // update next.context if necessary
@@ -70,11 +78,17 @@ export default function machine(states, initialState, initialContext, changeCb =
         // if the new state has an enter function, run it as well.
         // enter _can_ change state
         // enter can also optionally return a new context
-        const newContext = (newState.enter && newState.enter(next.context || context));
-        // since a common use case for an enter fn is to call an async method (usually loading data),
-        // ignore the return if it's a promise. This is not foolproof, but should
-        // handle most cases.
-        if (newContext && !(newContext instanceof Promise)) {
+        let newContext;
+
+        if (newState.enter) {
+          try {
+            newContext = await newState.enter(next.context || context);
+          } catch(e) {
+            newContext = e;
+          }
+        }
+
+        if (newContext) {
           context = next.context = newContext;
           // run changeCb again if context has changed
           changeCb(next);
